@@ -3,9 +3,9 @@ package com.example.myapplication.robot;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.map.GameMap;
 
-public class Robot implements movement{
+public class Robot implements movement {
     int ID;
-    Robot robot1, robot2, robot3, robot4, robot5;
+    private static Robot robot1, robot2, robot3, robot4, robot5;
     Location location;
 
     private Robot(int ID, Location startLocation) {
@@ -13,27 +13,31 @@ public class Robot implements movement{
         this.location = startLocation;
     }
 
-    public Robot getInstance(int ID) {
+    public static Robot getInstance(int ID) {
         switch (ID) {
             case 1:
-                if (robot1 == null) return new Robot(1, new Location(0, 0));
+                if (robot1 == null) robot1 = new Robot(1, new Location(0, 0));
+
                 return robot1;
             case 2:
-                if (robot2 == null) return new Robot(2, new Location(0, 0));
+                if (robot2 == null) robot2 = new Robot(2, new Location(0, 0));
+
                 return robot2;
             case 3:
-                if (robot3 == null) return new Robot(2, new Location(0, 0));
+                if (robot3 == null) robot3 = new Robot(3, new Location(0, 0));
+
                 return robot3;
             case 4:
-                if (robot4 == null) return new Robot(2, new Location(0, 0));
+                if (robot4 == null) robot4 = new Robot(4, new Location(0, 0));
                 return robot4;
             case 5:
-                if (robot5 == null) return new Robot(2, new Location(0, 0));
+                if (robot5 == null) robot5 = new Robot(5, new Location(0, 0));
                 return robot5;
             default:
                 throw new IllegalArgumentException("Invalid robot ID: " + ID);
         }
     }
+
     @Override
     public void moveRobot(int ID, Location target, GameMap map) {
         char direction = Location.direction(getLocation(ID), target);
@@ -45,7 +49,7 @@ public class Robot implements movement{
                 for (y = currectLocation.getY(); y < GameMap.mapSize; y++) {
                     if (map.blocks[x][y].getTopWall() ||
                             (y + 1 < GameMap.mapSize && map.blocks[x][y].getBottomWall()
-                                    && map.blocks[x][y].getRobotID()==0))
+                                    && map.blocks[x][y].getRobotID() == 0))
                         break;
                 }
                 break;
@@ -77,10 +81,10 @@ public class Robot implements movement{
                 return;
         }
         map.blocks[x][y].updateBlock(ID);
-        setLocation(ID, new Location(x, y));
+        Robot.setLocation(ID, new Location(x, y));
     }
 
-    private void setLocation(int ID, Location newLocation) {
+    public static void setLocation(int ID, Location newLocation) {
         switch (ID) {
             case 1:
                 robot1.location = newLocation;
@@ -102,7 +106,7 @@ public class Robot implements movement{
         }
     }
 
-    private Location getLocation(int ID) {
+    public static Location getLocation(int ID) {
         switch (ID) {
             case 1:
                 return robot1.location;
