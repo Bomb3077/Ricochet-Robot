@@ -1,113 +1,62 @@
 package com.example.myapplication.map;
 
-public abstract class Block implements BlockFactory {
-    Location location;
+public class Block implements BlockFactory {
+    private Location location;
+    private boolean walls[] = {false, false, false, false};
+    // top bottom left right
+    private int robotID = 0;
+    // 0 means no robot
+    // 1 to 5 means the robot occupy the block
+
+    public int getRobotID() {
+        return robotID;
+    }
+
+    private void setRobotID(int robotID) {
+        this.robotID = robotID;
+    }
+    public void updateBlock(int robotID){
+        setRobotID(robotID);
+    }
 
     public Block(Location location) {
         this.location = location;
     }
-}
-
-class defaultBlock extends Block {
-    public defaultBlock(Location location) {
-        super(location);
-    }
 
     @Override
     public Block create(Location location) {
-        return new defaultBlock(location);
+        return new Block(location);
     }
+    public void setWalls(boolean[] walls) {
+        this.walls = walls;
+    }
+    public void setLeftWall(boolean leftWall){
+        this.walls[2] = leftWall;
+    }
+    public void setTopWall(boolean topWall){
+        this.walls[0] = topWall;
+    }
+    public void setBottomWall(boolean bottomWall){
+        this.walls[1] = bottomWall;
+    }
+    public void setRightWall(boolean rightWall){
+        this.walls[3] = rightWall;
+    }
+    public boolean[] getWalls() {
+        return walls;
+    }
+    public boolean getLeftWall(){
+        return walls[2];
+    }
+    public boolean getRightWall(){
+        return walls[3];
+    }
+    public boolean getTopWall(){
+        return walls[0];
+    }
+    public boolean getBottomWall(){
+        return walls[1];
+    }
+
 }
 
-
-class TopBlock extends Block {
-    public TopBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new TopBlock(location);
-    }
-}
-
-class LeftBlock extends Block {
-    public LeftBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new LeftBlock(location);
-    }
-}
-
-class RightBlock extends Block {
-    public RightBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new RightBlock(location);
-    }
-}
-
-class BottomBlock extends Block {
-    public BottomBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new BottomBlock(location);
-    }
-}
-
-class TopRightBlock extends Block {
-    public TopRightBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new TopRightBlock(location);
-    }
-}
-
-class TopLeftBlock extends Block {
-
-    public TopLeftBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new TopLeftBlock(location);
-    }
-}
-
-class BottomRightBlock extends Block {
-
-
-    public BottomRightBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new BottomRightBlock(location);
-    }
-}
-
-class BottomLeftBlock extends Block {
-
-    public BottomLeftBlock(Location location) {
-        super(location);
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new BottomLeftBlock(location);
-    }
-}

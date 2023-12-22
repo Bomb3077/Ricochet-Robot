@@ -1,13 +1,13 @@
 package com.example.myapplication.map;
 
-public class Map {
+public class GameMap {
     public Block[][] blocks;
-    final int mapSize = 16;
+    public final static int mapSize = 16;
     GenerateMapStrategy generateMapStrategy;
-    public Map() {
+    public GameMap() {
         this.blocks = new Block[mapSize][mapSize];
     }
-    public Map(Block[][] blocks){
+    public GameMap(Block[][] blocks){
         if(blocks.length!=mapSize) throw new IllegalArgumentException("Illegal map size is" + blocks.length);
         this.blocks = blocks;
     }
