@@ -35,6 +35,6 @@ public class MapUnitTest {
         blocks[1][1].setWalls(new boolean[]{true, false, false, true});
 
         GameMap map2 = new GameMap(blocks);
-        assertEquals(map1, map2);
+        assertTrue(map1.equals(map2));
     }
 }

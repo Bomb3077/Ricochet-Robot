@@ -8,30 +8,26 @@ public class Robot implements movement {
     private static Robot robot1, robot2, robot3, robot4, robot5;
     Location location;
 
-    private Robot(int ID, Location startLocation) {
+    private Robot(int ID) {
         this.ID = ID;
-        this.location = startLocation;
     }
 
     public static Robot getInstance(int ID) {
         switch (ID) {
             case 1:
-                if (robot1 == null) robot1 = new Robot(1, new Location(0, 0));
-
+                if (robot1 == null) robot1 = new Robot(1);
                 return robot1;
             case 2:
-                if (robot2 == null) robot2 = new Robot(2, new Location(0, 0));
-
+                if (robot2 == null) robot2 = new Robot(2);
                 return robot2;
             case 3:
-                if (robot3 == null) robot3 = new Robot(3, new Location(0, 0));
-
+                if (robot3 == null) robot3 = new Robot(3);
                 return robot3;
             case 4:
-                if (robot4 == null) robot4 = new Robot(4, new Location(0, 0));
+                if (robot4 == null) robot4 = new Robot(4);
                 return robot4;
             case 5:
-                if (robot5 == null) robot5 = new Robot(5, new Location(0, 0));
+                if (robot5 == null) robot5 = new Robot(5);
                 return robot5;
             default:
                 throw new IllegalArgumentException("Invalid robot ID: " + ID);
@@ -39,53 +35,56 @@ public class Robot implements movement {
     }
 
     @Override
-    public void moveRobot(int ID, Location target, GameMap map) {
+    public void moveRobot(Location target, GameMap map) {
         char direction = Location.direction(getLocation(ID), target);
         Location currectLocation = getLocation(ID);
-        int x, y;
+        int x = currectLocation.getX(), y = currectLocation.getY();
         switch (direction) {
             case 'w':
-                x = currectLocation.getX();
-                for (y = currectLocation.getY(); y < GameMap.mapSize; y++) {
-                    if (map.blocks[x][y].getTopWall() ||
-                            (y + 1 < GameMap.mapSize && map.blocks[x][y].getBottomWall()
-                                    && map.blocks[x][y].getRobotID() == 0))
-                        break;
+                while (y < GameMap.mapSize && !map.blocks[x][y].getTopWall()) {
+                    if (map.blocks[x][y + 1].getBottomWall()) break;
+                    if (map.blocks[x][y + 1].getRobotID() != 0) break;
+                    y++;
                 }
                 break;
             case 'a':
-                y = currectLocation.getY();
-                for (x = currectLocation.getX(); x > 0; x--) {
-                    if (map.blocks[x][y].getLeftWall() ||
-                            (x - 1 > 0 && map.blocks[x - 1][y].getRightWall()))
-                        break;
+                while (x > 0 && !map.blocks[x][y].getLeftWall()) {
+                    if (map.blocks[x - 1][y].getRightWall()) break;
+                    if (map.blocks[x - 1][y].getRobotID() != 0) break;
+                    x--;
                 }
                 break;
             case 's':
-                x = currectLocation.getX();
-                for (y = currectLocation.getY(); y > 0; y--) {
-                    if (map.blocks[x][y].getTopWall() ||
-                            (y + 1 < GameMap.mapSize && map.blocks[x][y].getBottomWall()))
-                        break;
+                while (y > 0 && !map.blocks[x][y].getBottomWall()) {
+                    if (map.blocks[x][y - 1].getTopWall()) break;
+                    if (map.blocks[x][y - 1].getRobotID() != 0) break;
+                    y--;
                 }
                 break;
             case 'd':
-                y = currectLocation.getY();
-                for (x = currectLocation.getX(); x < GameMap.mapSize; x++) {
-                    if (map.blocks[x][y].getRightWall() ||
-                            (x + 1 < GameMap.mapSize && map.blocks[x + 1][y].getLeftWall()))
-                        break;
+                while (x < GameMap.mapSize && !map.blocks[x][y].getRightWall()) {
+                    if (map.blocks[x + 1][y].getLeftWall()) break;
+                    if (map.blocks[x + 1][y].getRobotID() != 0) break;
+                    x++;
                 }
                 break;
             default:
                 return;
         }
+        map.blocks[currectLocation.getX()][currectLocation.getY()].updateBlock(0);
         map.blocks[x][y].updateBlock(ID);
-        Robot.setLocation(ID, new Location(x, y));
+        this.setLocation(new Location(x, y));
     }
 
-    public static void setLocation(int ID, Location newLocation) {
-        switch (ID) {
+    public void setInitialLocation(Location start, GameMap map) {
+        if (map.blocks[start.getX()][start.getY()].getRobotID() != 0)
+            throw new IllegalArgumentException("there is robot already in this block");
+        setLocation(start);
+        map.blocks[start.getX()][start.getY()].updateBlock(this.ID);
+    }
+
+    public void setLocation(Location newLocation) {
+        switch (this.ID) {
             case 1:
                 robot1.location = newLocation;
                 break;

@@ -38,11 +38,48 @@ public class RobotUnitTest {
         assertFalse(robot1.equals(robot2));
     }
     @Test
-    public void robotMoveTest1(){
+    public void robotLocationTest1(){
         Robot robot1 = Robot.getInstance(1);
-        robot1.moveRobot(1, new Location(1, 0), map1);
+        robot1.setInitialLocation(new Location(0, 0), map1);
+        robot1.moveRobot(new Location(1, 0), map1);
         Location robotLocation = Robot.getLocation(1);
         assertTrue(robotLocation.equals(new Location(1, 0)));
+    }
+    @Test
+    public void blockUpdateTest1(){
+        Robot robot1 = Robot.getInstance(1);
+        robot1.setInitialLocation(new Location(0, 0), map1);
+        robot1.moveRobot(new Location(1, 0), map1);
         assertEquals(map1.blocks[1][0].getRobotID(), 1);
+    }
+    @Test
+    public void robotMoveTest2(){
+        Robot robot1 = Robot.getInstance(1);
+        robot1.setInitialLocation(new Location(0, 0), map1);
+        robot1.moveRobot(new Location(1, 0), map1);
+        Robot robot2 = Robot.getInstance(2);
+        robot2.setInitialLocation(new Location(0, 0), map1);
+        robot2.moveRobot(new Location(1, 0), map1);
+        Location robotLocation = Robot.getLocation(2);
+        assertTrue(robotLocation.equals(new Location(0,0)));
+    }
+    @Test
+    public void blockUpdateTest2(){
+        Robot robot1 = Robot.getInstance(1);
+        robot1.setInitialLocation(new Location(0, 0), map1);
+        robot1.moveRobot(new Location(1, 0), map1);
+        Robot robot2 = Robot.getInstance(2);
+        robot2.setInitialLocation(new Location(0, 0), map1);
+        robot2.moveRobot(new Location(1, 0), map1);
+        Location robotLocation = Robot.getLocation(2);
+        assertEquals(map1.blocks[0][0].getRobotID(), 2);
+    }
+    @Test
+    public void robotMoveTest3(){
+        Robot robot1 = Robot.getInstance(1);
+        robot1.moveRobot(new Location(0, 1), map1);
+        robot1.moveRobot(new Location(1, 0), map1);
+        Location robotLocation = Robot.getLocation(1);
+        assertEquals(map1.blocks[0][1], 0);
     }
 }
