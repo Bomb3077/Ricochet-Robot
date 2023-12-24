@@ -1,6 +1,7 @@
 package com.example.myapplication.activities;
 
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -24,12 +25,12 @@ import com.example.myapplication.map.Location;
 import com.example.myapplication.robot.Robot;
 
 public class GamePlayActivity extends AppCompatActivity {
-    private static final int SWIPE_THRESHOLD = 30; // Adjust this value based on testing
-    private static final int SWIPE_VELOCITY_THRESHOLD = 10;
+    private static final int MIN_DISTANCE_FOR_SWIPE = 150;
+    private float x1, x2, y1, y2; // for swipe
     LinearLayout gameMapLayout;
     GameMap gameMap;
-    private float x1, x2, y1, y2; // for swipe
-    static final int MIN_DISTANCE = 150;
+    MediaPlayer movingRobotPlayer;
+    public static int robotIDSelecting = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,8 @@ public class GamePlayActivity extends AppCompatActivity {
         gameMapLayout = findViewById(R.id.game_map);
 
         initialGameMapLayout();
-        
+        movingRobotPlayer = MediaPlayer.create(this, R.raw.robot_moving_sound);
+
     }
 
 
@@ -88,13 +90,14 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     private void moveRobotView(char direction) {
-        Location currentLocation = Robot.getLocation(1);
-        Robot robot = Robot.getInstance(1);
+        int robotID = robotIDSelecting;
+        Location currentLocation = Robot.getLocation(robotID);
+        Robot robot = Robot.getInstance(robotID);
         FrameLayout mapItemCurrent = findViewById(1234500 + currentLocation.getX() * GameMap.mapSize + currentLocation.getY());
         robot.moveRobot(direction, gameMap);
-        Location afterLocation = Robot.getLocation(1);
+        Location afterLocation = Robot.getLocation(robotID);
         if (!afterLocation.equals(currentLocation)) {
-            RobotView robotView = findViewById(1324500 + robot.getID());
+            RobotView robotView = findViewById(1324500 + robotID);
             mapItemCurrent.removeView(robotView);
 
             FrameLayout mapItemAfter = findViewById(1234500 + afterLocation.getX() * GameMap.mapSize + afterLocation.getY());
@@ -115,7 +118,9 @@ public class GamePlayActivity extends AppCompatActivity {
                 y2 = event.getY();
                 float deltaX = x2 - x1;
                 float deltaY = y1 - y2; // screen is top to bottom
-                if (!(Math.abs(deltaX) > MIN_DISTANCE || Math.abs(deltaY) > MIN_DISTANCE)) break;
+                if (robotIDSelecting==0) break;
+                if (!(Math.abs(deltaX) > MIN_DISTANCE_FOR_SWIPE || Math.abs(deltaY) > MIN_DISTANCE_FOR_SWIPE))
+                    break;
                 if (Math.abs(deltaX) > Math.abs(deltaY)) {
                     if (deltaX > 0) {
                         moveRobotView('d');
@@ -128,6 +133,9 @@ public class GamePlayActivity extends AppCompatActivity {
                     } else {
                         moveRobotView('s');
                     }
+                }
+                if (!movingRobotPlayer.isPlaying()) {
+                    movingRobotPlayer.start();
                 }
                 break;
         }
