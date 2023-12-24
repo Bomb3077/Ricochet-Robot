@@ -4,6 +4,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,13 +14,13 @@ import com.example.myapplication.graphics.RobotView;
 import com.example.myapplication.graphics.TileView;
 import com.example.myapplication.map.GameMap;
 import com.example.myapplication.map.GenerateMapStrategy.BasicGenerate;
-import com.example.myapplication.map.GenerateMapStrategy.DefaultGenerate;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.robot.Robot;
 
 public class GamePlayActivity extends AppCompatActivity {
     LinearLayout gameMapLayout;
     GameMap gameMap;
+    ImageButton rightButton, upButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,15 @@ public class GamePlayActivity extends AppCompatActivity {
 
         initialGameMapLayout();
 
+        initialButtons();
+    }
+
+    private void initialButtons() {
+        //testing for now
+        rightButton = findViewById(R.id.rightButton);
+        upButton = findViewById(R.id.upButton);
+        rightButton.setOnClickListener(view->moveRobotView());
+        upButton.setOnClickListener(view->moveRobotView());
     }
 
     private void initialRobots() {
@@ -57,7 +67,7 @@ public class GamePlayActivity extends AppCompatActivity {
                 FrameLayout mapItem = (FrameLayout) inflater.inflate(R.layout.map_item, mapRow, false);
                 TileView tileView = new TileView(mapItem.getContext(),
                         new Rect(0, 0, 64, 64), gameMap.blocks[x][y]);
-                tileView.setId(1234500 + x * GameMap.mapSize + y);// 1234500 is arbitrary number to ensure unqique ID;
+
                 mapItem.addView(tileView);
 
                 int robotIDAtTile = gameMap.blocks[x][y].getRobotID();
@@ -68,10 +78,26 @@ public class GamePlayActivity extends AppCompatActivity {
                     mapItem.addView(robotView);
                 }
 
+                mapItem.setId(1234500 + x * GameMap.mapSize + y);// 1234500 is arbitrary number to ensure unqique ID;
                 mapRow.addView(mapItem);
             }
 
             gameMapLayout.addView(mapRow);
+        }
+    }
+
+    private void moveRobotView() {
+        Location currentLocation = Robot.getLocation(1);
+        Robot robot = Robot.getInstance(1);
+        FrameLayout mapItemCurrent = findViewById(1234500 + currentLocation.getX() * GameMap.mapSize + currentLocation.getY());
+        robot.moveRobot(new Location(9, 6), gameMap);
+        Location afterLocation = Robot.getLocation(1);
+        if (!afterLocation.equals(currentLocation)) {
+            RobotView robotView = findViewById(1324500 + robot.getID());
+            mapItemCurrent.removeView(robotView);
+
+            FrameLayout mapItemAfter = findViewById(1234500 + afterLocation.getX() * GameMap.mapSize + afterLocation.getY());
+            mapItemAfter.addView(robotView);
         }
     }
 }
