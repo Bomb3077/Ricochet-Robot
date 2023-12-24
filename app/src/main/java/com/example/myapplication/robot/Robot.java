@@ -40,8 +40,7 @@ public class Robot implements movement {
     }
 
     @Override
-    public void moveRobot(Location target, GameMap map) {
-        char direction = Location.direction(getLocation(ID), target);
+    public void moveRobot(char direction, GameMap map) {
         Location currectLocation = getLocation(ID);
         int x = currectLocation.getX(), y = currectLocation.getY();
         switch (direction) {
