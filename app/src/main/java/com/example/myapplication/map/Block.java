@@ -4,9 +4,9 @@ import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 
-public class Block implements BlockFactory {
+public class Block {
     private Location location;
-    private boolean walls[] = {false, false, false, false};
+    private boolean walls[];
     // top bottom left right
     private int robotID = 0;
     // 0 means no robot
@@ -15,11 +15,7 @@ public class Block implements BlockFactory {
 
     public Block(Location location) {
         this.location = location;
-    }
-
-    @Override
-    public Block create(Location location) {
-        return new Block(location);
+        setWalls(new boolean[]{false, false, false, false});
     }
 
     public int getRobotID() {
