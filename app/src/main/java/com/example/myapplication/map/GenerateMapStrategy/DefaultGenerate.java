@@ -5,7 +5,7 @@ import com.example.myapplication.map.GameMap;
 import com.example.myapplication.map.Location;
 
 public class DefaultGenerate implements GenerateMapStrategy{
-
+    //this generates map with wall
     public DefaultGenerate() {
     }
     @Override
@@ -21,5 +21,4 @@ public class DefaultGenerate implements GenerateMapStrategy{
             }
         }
     }
-
 }

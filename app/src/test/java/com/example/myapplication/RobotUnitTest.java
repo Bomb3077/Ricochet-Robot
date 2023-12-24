@@ -77,9 +77,10 @@ public class RobotUnitTest {
     @Test
     public void robotMoveTest3(){
         Robot robot1 = Robot.getInstance(1);
+        robot1.setInitialLocation(new Location(0,0), map1);
         robot1.moveRobot(new Location(0, 1), map1);
         robot1.moveRobot(new Location(1, 0), map1);
         Location robotLocation = Robot.getLocation(1);
-        assertEquals(map1.blocks[0][1], 0);
+        assertEquals(map1.blocks[0][1].getRobotID(), 0);
     }
 }

@@ -4,7 +4,9 @@ import com.example.myapplication.map.Location;
 import com.example.myapplication.map.GameMap;
 
 public class Robot implements movement {
-    int ID;
+
+
+    private int ID;
     private static Robot robot1, robot2, robot3, robot4, robot5;
     Location location;
 
@@ -12,6 +14,9 @@ public class Robot implements movement {
         this.ID = ID;
     }
 
+    public int getID() {
+        return ID;
+    }
     public static Robot getInstance(int ID) {
         switch (ID) {
             case 1:
