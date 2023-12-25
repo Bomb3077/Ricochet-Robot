@@ -1,23 +1,27 @@
 package com.example.myapplication.map;
 
 public class Token {
+    public static final int totalToken = 8;
+    public static int tokenCollected;
     Location location;
-    private byte tokenNumber; // specify which robot is acceptable for first five robot number
-    // 00011000 means accept 4 and 5
-    public Token(Location location, byte tokenNumber){
+    private byte tokenCollectionFlags;
+    public Token(Location location, byte tokenCollectionFlags){
         this.location = location;
-        this.tokenNumber = tokenNumber;
+        this.tokenCollectionFlags = tokenCollectionFlags;
+    }
+    public static void countCollectedToken(){
+        tokenCollected++;
     }
 
     public byte getTokenNumber() {
-        return tokenNumber;
+        return tokenCollectionFlags;
     }
 
     @Override
     public String toString() {
         return "Token{" +
                 "location=" + location.toString() +
-                ", tokenNumber=" + tokenNumber +
+                ", tokenNumber=" + tokenCollectionFlags +
                 '}';
     }
 }

@@ -3,6 +3,7 @@ package com.example.myapplication.robot;
 import com.example.myapplication.map.Block;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.map.GameMap;
+import com.example.myapplication.map.Token;
 
 public class Robot implements Action {
 
@@ -84,7 +85,10 @@ public class Robot implements Action {
     public void collectToken(GameMap map){
         Location currectLocation = Robot.getLocation(this.getID());
         Block currentBlock = map.blocks[currectLocation.getX()][currectLocation.getY()];
-        if(!(currentBlock.getToken()==null)) currentBlock.setToken(null);
+        if(!(currentBlock.getToken()==null)){
+            currentBlock.setToken(null);
+            Token.countCollectedToken();
+        }
     }
 
     public void setInitialLocation(Location start, GameMap map) {

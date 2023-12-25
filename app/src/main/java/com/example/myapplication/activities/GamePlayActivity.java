@@ -18,7 +18,6 @@ import com.example.myapplication.graphics.TokenView;
 import com.example.myapplication.map.GameMap;
 import com.example.myapplication.map.GenerateMapStrategy.BasicGenerate;
 import com.example.myapplication.map.GenerateTokenStrategy.CornerGenerateToken;
-import com.example.myapplication.map.GenerateTokenStrategy.DefaultGenerateToken;
 import com.example.myapplication.map.GenerateTokenStrategy.GenerateTokenStrategy;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.map.Token;
@@ -31,6 +30,7 @@ public class GamePlayActivity extends AppCompatActivity {
     GameMap gameMap;
     MediaPlayer movingRobotPlayer, collectTokenPlayer;
     public static int robotIDSelecting = 0;
+    GenerateTokenStrategy generateTokenStrategy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,8 +52,11 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     private void initialTokens() {
-        GenerateTokenStrategy generateTokenStrategy = new CornerGenerateToken();
-        generateTokenStrategy.generateToken(gameMap);
+        generateTokenStrategy = new CornerGenerateToken();
+        generateToken();
+    }
+    private void generateToken(){
+        if(Token.tokenCollected<Token.totalToken) generateTokenStrategy.generateToken(gameMap);
     }
 
 
@@ -133,6 +136,8 @@ public class GamePlayActivity extends AppCompatActivity {
         @SuppressLint("ResourceType") TokenView tokenView = findViewById(1512400);
         FrameLayout mapItem = findViewById(1234500 + currentX * GameMap.mapSize + currentY);
         mapItem.removeView(tokenView);
+        LinearLayout tokenFirstRow = findViewById(R.id.token_first_row);
+        tokenFirstRow.addView(tokenView);
     }
 
 
