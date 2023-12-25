@@ -1,9 +1,10 @@
 package com.example.myapplication.robot;
 
+import com.example.myapplication.map.Block;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.map.GameMap;
 
-public class Robot implements movement {
+public class Robot implements Action {
 
 
     private int ID;
@@ -75,16 +76,22 @@ public class Robot implements movement {
             default:
                 return;
         }
-        map.blocks[currectLocation.getX()][currectLocation.getY()].updateBlock(0);
-        map.blocks[x][y].updateBlock(ID);
+        map.blocks[currectLocation.getX()][currectLocation.getY()].setRobotID(0);
+        map.blocks[x][y].setRobotID(ID);
         this.setLocation(new Location(x, y));
+    }
+    @Override
+    public void collectToken(GameMap map){
+        Location currectLocation = Robot.getLocation(this.getID());
+        Block currentBlock = map.blocks[currectLocation.getX()][currectLocation.getY()];
+        if(!(currentBlock.getToken()==null)) currentBlock.setToken(null);
     }
 
     public void setInitialLocation(Location start, GameMap map) {
         if (map.blocks[start.getX()][start.getY()].getRobotID() != 0)
             throw new IllegalArgumentException("there is robot already in this block");
         setLocation(start);
-        map.blocks[start.getX()][start.getY()].updateBlock(this.ID);
+        map.blocks[start.getX()][start.getY()].setRobotID(this.ID);
     }
 
     public void setLocation(Location newLocation) {

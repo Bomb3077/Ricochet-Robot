@@ -3,12 +3,12 @@ package com.example.myapplication.map;
 import androidx.annotation.Nullable;
 
 import com.example.myapplication.map.GenerateMapStrategy.GenerateMapStrategy;
+import com.example.myapplication.map.GenerateTokenStrategy.GenerateTokenStrategy;
 
 public class GameMap {
     public Block[][] blocks;
     public static int mapSize = 16;
-    GenerateMapStrategy generateMapStrategy;
-
+    private GenerateMapStrategy generateMapStrategy;
     public GameMap() {
         this.blocks = new Block[mapSize][mapSize];
     }

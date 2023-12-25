@@ -1,8 +1,8 @@
 package com.example.myapplication.robot;
 
 import com.example.myapplication.map.GameMap;
-import com.example.myapplication.map.Location;
 
-public interface movement {
+public interface Action {
     void moveRobot(char direction, GameMap map);
+    void collectToken(GameMap map);
 }

@@ -11,23 +11,27 @@ public class Block {
     private int robotID = 0;
     // 0 means no robot
     // 1 to 5 means the robot occupy the block
-
+    private Token token;
 
     public Block(Location location) {
         this.location = location;
         setWalls(new boolean[]{false, false, false, false});
     }
 
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
     public int getRobotID() {
         return robotID;
     }
 
-    private void setRobotID(int robotID) {
+    public void setRobotID(int robotID) {
         this.robotID = robotID;
-    }
-
-    public void updateBlock(int robotID) {
-        setRobotID(robotID);
     }
 
     public void setWalls(boolean[] walls) {
@@ -76,6 +80,14 @@ public class Block {
         Block other = (Block) obj;
         return this.location.equals(other.location) && this.robotID == other.robotID &&
                 Arrays.equals(this.walls, other.walls);
+    }
+
+    public boolean existTokenAtBlock() {
+        return token!=null;
+    }
+
+    public boolean isTokenCollectable() {
+        return (token.getTokenNumber() & (1<<(robotID-1)))!=0;
     }
 }
 
