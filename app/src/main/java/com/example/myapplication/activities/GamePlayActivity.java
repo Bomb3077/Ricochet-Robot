@@ -21,6 +21,8 @@ import com.example.myapplication.graphics.RobotView;
 import com.example.myapplication.graphics.TileView;
 import com.example.myapplication.map.GameMap;
 import com.example.myapplication.map.GenerateMapStrategy.BasicGenerate;
+import com.example.myapplication.map.GenerateTokenStrategy.DefaultGenerateToken;
+import com.example.myapplication.map.GenerateTokenStrategy.GenerateTokenStrategy;
 import com.example.myapplication.map.Location;
 import com.example.myapplication.robot.Robot;
 
@@ -37,6 +39,7 @@ public class GamePlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initialGameMap();
         initialRobots();
+        initialTokens();
 
         setContentView(R.layout.activity_game_play);
         gameMapLayout = findViewById(R.id.game_map);
@@ -44,6 +47,11 @@ public class GamePlayActivity extends AppCompatActivity {
         initialGameMapLayout();
         movingRobotPlayer = MediaPlayer.create(this, R.raw.robot_moving_sound);
 
+    }
+
+    private void initialTokens() {
+        GenerateTokenStrategy generateTokenStrategy = new DefaultGenerateToken();
+        generateTokenStrategy.generateToken(gameMap);
     }
 
 
