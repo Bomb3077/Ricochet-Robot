@@ -37,14 +37,10 @@ public class RobotView extends View {
 
     private void setupClickListener() {
         this.setOnClickListener(view -> {
-            if (GamePlayActivity.robotIDSelecting == robot.getID()) {
-                GamePlayActivity.robotIDSelecting = 0;
-                if (!deselectRobotPlayer.isPlaying()) deselectRobotPlayer.start();
-            }
-            else{
-                GamePlayActivity.robotIDSelecting = robot.getID();
-                if (!selectRobotPlayer.isPlaying()) selectRobotPlayer.start();
-            }
+            boolean isSelected = GamePlayActivity.robotIDSelecting == robot.getID();
+            GamePlayActivity.robotIDSelecting = isSelected ? 0 : robot.getID();
+            MediaPlayer player = isSelected ? deselectRobotPlayer : selectRobotPlayer;
+            if (!player.isPlaying()) player.start();
         });
     }
 
@@ -52,7 +48,7 @@ public class RobotView extends View {
         return robot;
     }
 
-    private void drawTile(Canvas canvas, int robotX, int robotY) {
+    private void drawRobot(Canvas canvas, int robotX, int robotY) {
 
         int srcX = robotX * robotWidth;
         int srcY = robotY * robotHeight;
@@ -68,6 +64,6 @@ public class RobotView extends View {
         super.onDraw(canvas);
         int robotID = robot.getID();
         //robotID starts with 1
-        drawTile(canvas, (robotID - 1) % 3, (robotID - 1) / 3);
+        drawRobot(canvas, (robotID - 1) % 3, (robotID - 1) / 3);
     }
 }

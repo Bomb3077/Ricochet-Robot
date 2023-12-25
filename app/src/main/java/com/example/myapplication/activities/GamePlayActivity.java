@@ -1,29 +1,27 @@
 package com.example.myapplication.activities;
 
+import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.myapplication.R;
 import com.example.myapplication.graphics.RobotView;
 import com.example.myapplication.graphics.TileView;
+import com.example.myapplication.graphics.TokenView;
 import com.example.myapplication.map.GameMap;
 import com.example.myapplication.map.GenerateMapStrategy.BasicGenerate;
+import com.example.myapplication.map.GenerateTokenStrategy.CornerGenerateToken;
 import com.example.myapplication.map.GenerateTokenStrategy.DefaultGenerateToken;
 import com.example.myapplication.map.GenerateTokenStrategy.GenerateTokenStrategy;
 import com.example.myapplication.map.Location;
+import com.example.myapplication.map.Token;
 import com.example.myapplication.robot.Robot;
 
 public class GamePlayActivity extends AppCompatActivity {
@@ -31,7 +29,7 @@ public class GamePlayActivity extends AppCompatActivity {
     private float x1, x2, y1, y2; // for swipe
     LinearLayout gameMapLayout;
     GameMap gameMap;
-    MediaPlayer movingRobotPlayer;
+    MediaPlayer movingRobotPlayer, collectTokenPlayer;
     public static int robotIDSelecting = 0;
 
     @Override
@@ -44,13 +42,17 @@ public class GamePlayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_play);
         gameMapLayout = findViewById(R.id.game_map);
 
-        initialGameMapLayout();
-        movingRobotPlayer = MediaPlayer.create(this, R.raw.robot_moving_sound);
+        initialLayout();
+        setupMediaPlayer();
+    }
 
+    private void setupMediaPlayer() {
+        movingRobotPlayer = MediaPlayer.create(this, R.raw.robot_moving_sound);
+        collectTokenPlayer = MediaPlayer.create(this, R.raw.collect_token);
     }
 
     private void initialTokens() {
-        GenerateTokenStrategy generateTokenStrategy = new DefaultGenerateToken();
+        GenerateTokenStrategy generateTokenStrategy = new CornerGenerateToken();
         generateTokenStrategy.generateToken(gameMap);
     }
 
@@ -70,7 +72,8 @@ public class GamePlayActivity extends AppCompatActivity {
         gameMap.generateMap();
     }
 
-    private void initialGameMapLayout() {
+    @SuppressLint("ResourceType")
+    private void initialLayout() {
         LayoutInflater inflater = getLayoutInflater();
         for (int y = GameMap.mapSize - 1; y >= 0; y--) {// add the 0th row at last since we need coordinates
             LinearLayout mapRow = (LinearLayout) inflater.inflate(R.layout.map_row, gameMapLayout, false);
@@ -82,11 +85,17 @@ public class GamePlayActivity extends AppCompatActivity {
                 mapItem.addView(tileView);
 
                 int robotIDAtTile = gameMap.blocks[x][y].getRobotID();
+                Token token = gameMap.blocks[x][y].getToken();
                 if (robotIDAtTile != 0) {
                     RobotView robotView = new RobotView(mapItem.getContext(),
                             new Rect(0, 0, 64, 64), Robot.getInstance(robotIDAtTile));
                     robotView.setId(1324500 + robotIDAtTile);//remember ID starts at 1
                     mapItem.addView(robotView);
+                }
+                if (token != null) {
+                    TokenView tokenView = new TokenView(mapItem.getContext(), new Rect(0, 0, 64, 64), token);
+                    tokenView.setId(1512400);
+                    mapItem.addView(tokenView);
                 }
 
                 mapItem.setId(1234500 + x * GameMap.mapSize + y);// 1234500 is arbitrary number to ensure unqique ID;
@@ -105,12 +114,25 @@ public class GamePlayActivity extends AppCompatActivity {
         robot.moveRobot(direction, gameMap);
         Location afterLocation = Robot.getLocation(robotID);
         if (!afterLocation.equals(currentLocation)) {
+            if (!movingRobotPlayer.isPlaying()) movingRobotPlayer.start();
             RobotView robotView = findViewById(1324500 + robotID);
             mapItemCurrent.removeView(robotView);
 
             FrameLayout mapItemAfter = findViewById(1234500 + afterLocation.getX() * GameMap.mapSize + afterLocation.getY());
             mapItemAfter.addView(robotView);
         }
+    }
+    private void collectTokenView(Location location){
+        int currentX = location.getX();
+        int currentY = location.getY();
+        if(!(gameMap.blocks[currentX][currentY].existTokenAtBlock())) return;
+        if(!(gameMap.blocks[currentX][currentY].isTokenCollectable())) return;
+        if(!(collectTokenPlayer.isPlaying())) collectTokenPlayer.start();
+        Robot robot = Robot.getInstance(robotIDSelecting);
+        robot.collectToken(gameMap);
+        @SuppressLint("ResourceType") TokenView tokenView = findViewById(1512400);
+        FrameLayout mapItem = findViewById(1234500 + currentX * GameMap.mapSize + currentY);
+        mapItem.removeView(tokenView);
     }
 
 
@@ -125,30 +147,16 @@ public class GamePlayActivity extends AppCompatActivity {
                 x2 = event.getX();
                 y2 = event.getY();
                 float deltaX = x2 - x1;
-                float deltaY = y1 - y2; // screen is top to bottom
-                if (robotIDSelecting==0) break;
-                if (!(Math.abs(deltaX) > MIN_DISTANCE_FOR_SWIPE || Math.abs(deltaY) > MIN_DISTANCE_FOR_SWIPE))
-                    break;
-                if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                    if (deltaX > 0) {
-                        moveRobotView('d');
-                    } else {
-                        moveRobotView('a');
-                    }
-                } else {
-                    if (deltaY > 0) {
-                        moveRobotView('w');
-                    } else {
-                        moveRobotView('s');
-                    }
-                }
-                if (!movingRobotPlayer.isPlaying()) {
-                    movingRobotPlayer.start();
+                float deltaY = y1 - y2;
+                if (robotIDSelecting != 0 && (Math.abs(deltaX) > MIN_DISTANCE_FOR_SWIPE || Math.abs(deltaY) > MIN_DISTANCE_FOR_SWIPE)) {
+                    char direction = Math.abs(deltaX) > Math.abs(deltaY) ?
+                            (deltaX > 0 ? 'd' : 'a') :
+                            (deltaY > 0 ? 'w' : 's');
+                    moveRobotView(direction);
+                    collectTokenView(Robot.getLocation(robotIDSelecting));
                 }
                 break;
         }
         return super.onTouchEvent(event);
     }
-
-
 }

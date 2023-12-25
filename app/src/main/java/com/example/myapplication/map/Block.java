@@ -30,12 +30,8 @@ public class Block {
         return robotID;
     }
 
-    private void setRobotID(int robotID) {
+    public void setRobotID(int robotID) {
         this.robotID = robotID;
-    }
-
-    public void updateBlock(int robotID) {
-        setRobotID(robotID);
     }
 
     public void setWalls(boolean[] walls) {
@@ -84,6 +80,14 @@ public class Block {
         Block other = (Block) obj;
         return this.location.equals(other.location) && this.robotID == other.robotID &&
                 Arrays.equals(this.walls, other.walls);
+    }
+
+    public boolean existTokenAtBlock() {
+        return token!=null;
+    }
+
+    public boolean isTokenCollectable() {
+        return (token.getTokenNumber() & (1<<(robotID-1)))!=0;
     }
 }
 

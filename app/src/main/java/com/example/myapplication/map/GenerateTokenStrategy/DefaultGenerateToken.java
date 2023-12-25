@@ -18,7 +18,7 @@ public class DefaultGenerateToken implements GenerateTokenStrategy{
             x = random.nextInt(16);
             y = random.nextInt(16);
         } while (map.blocks[x][y].getRobotID() != 0 || map.blocks[x][y].getToken() != null);
-        Token token = new Token(new Location(x, y), random.nextInt(5)+1);
+        Token token = new Token(new Location(x, y), (byte)(random.nextInt(5)+1));
         Log.d("token", token.toString());
         map.blocks[x][y].setToken(token);
     }
