@@ -64,7 +64,7 @@ public class Block {
     }
 
     private boolean getBit(int i) {
-        return (byte) (this.wallFlags >> i) == (byte) 1;
+        return (byte)((this.wallFlags) & 1<<i) == (byte) 1<<i;
     }
 
     public boolean getTopWall() {

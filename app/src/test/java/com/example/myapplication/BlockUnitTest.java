@@ -18,8 +18,7 @@ public class BlockUnitTest {
     @Test
     public void setRightWall2(){
         Block block = new Block(new Location(0, 0));
-        block.setRightWall(true);
-        block.setRightWall(false);
-        assertEquals(block.getWallFlags(),(byte)0);
+        block.setWalls((byte) 3);
+        assertEquals(block.getRightWall(),true);
     }
 }

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.example.myapplication.R;
 import com.example.myapplication.map.Block;
