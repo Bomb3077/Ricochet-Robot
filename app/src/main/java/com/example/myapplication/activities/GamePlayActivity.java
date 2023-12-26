@@ -80,12 +80,14 @@ public class GamePlayActivity extends AppCompatActivity {
     @SuppressLint("ResourceType")
     private void initialGameMapLayout() {
         LayoutInflater inflater = getLayoutInflater();
+        int totalHeight = gameMapLayout.getHeight();
+        int rowHeight = totalHeight/GameMap.mapSize;
+        int colWidth = rowHeight;
         for (int y = GameMap.mapSize - 1; y >= 0; y--) {// add the 0th row at last since we need coordinates
             LinearLayout mapRow = (LinearLayout) inflater.inflate(R.layout.map_row, gameMapLayout, false);
             for (int x = 0; x < GameMap.mapSize; x++) {
                 FrameLayout mapItem = (FrameLayout) inflater.inflate(R.layout.map_item, mapRow, false);
-                TileView tileView = new TileView(mapItem.getContext(),
-                        new Rect(0, 0, 64, 64), gameMap.blocks[x][y]);
+                TileView tileView = new TileView(mapItem.getContext(),gameMap.blocks[x][y]);
 
                 mapItem.addView(tileView);
 
