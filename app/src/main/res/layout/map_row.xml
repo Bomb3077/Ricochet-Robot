@@ -4,6 +4,5 @@
     android:layout_height="64px"
     android:orientation="horizontal"
     android:layout_margin="0px"
-    >
-    <!-- CardViews will go here -->
+    android:padding="0px">
 </LinearLayout>

@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class Block {
     private Location location;
-    private boolean walls[];
+    private byte wallFlags = 0;
     // top bottom left right
     private int robotID = 0;
     // 0 means no robot
@@ -15,7 +15,6 @@ public class Block {
 
     public Block(Location location) {
         this.location = location;
-        setWalls(new boolean[]{false, false, false, false});
     }
 
     public Token getToken() {
@@ -34,60 +33,71 @@ public class Block {
         this.robotID = robotID;
     }
 
-    public void setWalls(boolean[] walls) {
-        this.walls = walls;
+    public void setWalls(byte wallFlags) {
+        this.wallFlags = wallFlags;
     }
 
-    public void setLeftWall(boolean leftWall) {
-        this.walls[2] = leftWall;
+    private void setBit(boolean wallStatus, int i) {
+        wallFlags = (byte) (wallStatus
+                ? wallFlags | (1 << i)
+                : wallFlags & ~(1 << i));
     }
 
     public void setTopWall(boolean topWall) {
-        this.walls[0] = topWall;
+        setBit(topWall, 3);
+    }
+
+    public void setLeftWall(boolean leftWall) {
+        setBit(leftWall, 2);
     }
 
     public void setBottomWall(boolean bottomWall) {
-        this.walls[1] = bottomWall;
+        setBit(bottomWall, 1);
     }
 
     public void setRightWall(boolean rightWall) {
-        this.walls[3] = rightWall;
+        setBit(rightWall, 0);
     }
 
-    public boolean[] getWalls() {
-        return walls;
+    public byte getWallFlags() {
+        return wallFlags;
     }
 
-    public boolean getLeftWall() {
-        return walls[2];
-    }
-
-    public boolean getRightWall() {
-        return walls[3];
+    private boolean getBit(int i) {
+        return (byte) (this.wallFlags >> i) == (byte) 1;
     }
 
     public boolean getTopWall() {
-        return walls[0];
+        return getBit(3);
+    }
+
+    public boolean getLeftWall() {
+        return getBit(2);
     }
 
     public boolean getBottomWall() {
-        return walls[1];
+        return getBit(1);
     }
+
+    public boolean getRightWall() {
+        return getBit(0);
+    }
+
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if (!(obj instanceof Block)) return false;
         Block other = (Block) obj;
         return this.location.equals(other.location) && this.robotID == other.robotID &&
-                Arrays.equals(this.walls, other.walls);
+                this.wallFlags == other.wallFlags;
     }
 
     public boolean existTokenAtBlock() {
-        return token!=null;
+        return token != null;
     }
 
     public boolean isTokenCollectable() {
-        return (token.getTokenNumber() & (1<<(robotID-1)))!=0;
+        return (token.getTokenNumber() & (1 << (robotID - 1))) != 0;
     }
 }
 

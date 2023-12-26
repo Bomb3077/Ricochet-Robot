@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="64px"
     android:layout_height="64px"
-    android:layout_margin="0px">
+    android:layout_margin="0px"
+    android:padding="0px">
 
 </FrameLayout>

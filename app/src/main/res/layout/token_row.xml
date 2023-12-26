@@ -3,6 +3,5 @@
     android:layout_width="512px"
     android:layout_height="64px"
     android:orientation="horizontal"
-    android:layout_margin="0px"
-    >
+    android:layout_margin="0px">
 </LinearLayout>

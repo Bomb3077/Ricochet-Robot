@@ -39,19 +39,9 @@ public class TileView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        int blockType = booleanArrayToInt(block.getWalls());
+        int blockType = (int)(block.getWallFlags());
         drawTile(canvas, blockType % 4, blockType / 4);
     }
 
-
-    public static int booleanArrayToInt(boolean[] walls) {
-        int result = 0;
-        for (int i = 0; i < walls.length; i++) {
-            if (walls[walls.length - i - 1]) {
-                result |= (1 << i);
-            }
-        }
-        return result;
-    }
 }
 

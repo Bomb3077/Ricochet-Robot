@@ -11,9 +11,9 @@ public class BasicGenerate implements GenerateMapStrategy{
         map.setGenerateMapStrategy(new DefaultGenerate());
         map.generateMap();
         int mapSizeDivideBy2 = GameMap.mapSize/2; //it will throw exception at defaultGenerate so simply assume block size equals mapSize
-        blocks[mapSizeDivideBy2-1][mapSizeDivideBy2-1].setWalls(new boolean[]{false, true, true, false});
-        blocks[mapSizeDivideBy2][mapSizeDivideBy2-1].setWalls(new boolean[]{false, true, false, true});
-        blocks[mapSizeDivideBy2-1][mapSizeDivideBy2].setWalls(new boolean[]{true, false, true, false});
-        blocks[mapSizeDivideBy2][mapSizeDivideBy2].setWalls(new boolean[]{true, false, false, true});
+        blocks[mapSizeDivideBy2-1][mapSizeDivideBy2-1].setWalls((byte)6);
+        blocks[mapSizeDivideBy2][mapSizeDivideBy2-1].setWalls((byte)3);
+        blocks[mapSizeDivideBy2-1][mapSizeDivideBy2].setWalls((byte)12);
+        blocks[mapSizeDivideBy2][mapSizeDivideBy2].setWalls((byte)9);
     }
 }
