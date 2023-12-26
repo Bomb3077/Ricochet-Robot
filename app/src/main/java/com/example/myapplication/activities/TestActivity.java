@@ -14,7 +14,5 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TokenView tokenView= new TokenView(this, new Rect(0,0,512,512), new Token(new Location(1, 1), (byte)0));
-        setContentView(tokenView);
     }
 }
