@@ -1,5 +1,10 @@
 package com.example.myapplication.map.Compressed;
 
+import androidx.annotation.Nullable;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 public class CompressedObjects {
     public byte[] robotLocations;
     short target;
@@ -22,38 +27,38 @@ public class CompressedObjects {
         int count = 0;
         switch (direction) {
             case 'N':
-                currColumn = (short) (map.col[15 - (robotLocation & 15)] << 1);
+                currColumn = (short) (map.col[15 - robotLocation & 15] << 1);
                 robotsAndWall = helper1(currColumn, robotLocation, objects.robotLocations);
-                while (getDigit(robotsAndWall, Math.abs(robotLocation >> 4) + count + 1)) count++;
+                while (getDigit(robotsAndWall, ((robotLocation >> 4) & 15) + count + 1)) count++;
                 if (count == 0) return new CompressedObjects(objects);
-                newRobotLocation = (byte) (((Math.abs(robotLocation >> 4) + (count)) << 4) | (robotLocation & 15));
+                newRobotLocation = (byte) (((((robotLocation >> 4) & 15) + count) << 4) | (robotLocation & 15));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
                 return new CompressedObjects(robotLocationsClone, objects.target);
             case 'S':
-                currColumn = map.col[15 - (robotLocation & 15)];
+                currColumn = map.col[15 - robotLocation & 15];
                 robotsAndWall = helper1(currColumn, robotLocation, objects.robotLocations);
-                while (getDigit(robotsAndWall, (15-Math.abs(robotLocation >> 4)) - count - 1)) count++;
+                while (getDigit(robotsAndWall, ((robotLocation >> 4) & 15) - count - 1)) count++;
                 if (count == 0) return new CompressedObjects(objects);
-                newRobotLocation = (byte) (((15-Math.abs(robotLocation >> 4) - (count)) << 4) | (robotLocation & 15));
+                newRobotLocation = (byte) (((((robotLocation >> 4) & 15) - count) << 4) | (robotLocation & 15));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
                 return new CompressedObjects(robotLocationsClone, objects.target);
             case 'W':
-                currRow = map.row[15 - (robotLocation >> 4) & 15];
+                currRow = map.row[15 - ((robotLocation >> 4) & 15)];
                 robotsAndWall = helper2(currRow, robotLocation, objects.robotLocations);
-                while (getDigit(robotsAndWall, Math.abs(robotLocation & 15) - count - 1)) count++;
+                while (getDigit(robotsAndWall, (robotLocation & 15) - count - 1)) count++;
                 if (count == 0) return new CompressedObjects(objects);
-                newRobotLocation = (byte) ((Math.abs(robotLocation & 15) - (count)) | (robotLocation & 15 << 4));
+                newRobotLocation = (byte) (((robotLocation & 15) - count) | (robotLocation & (15 << 4)));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
                 return new CompressedObjects(robotLocationsClone, objects.target);
             case 'E':
-                currRow = (short) (map.row[15 - (robotLocation >> 4) & 15] << 1);
+                currRow = (short) (map.row[15 - ((robotLocation >> 4) & 15)] << 1);
                 robotsAndWall = helper2(currRow, robotLocation, objects.robotLocations);
-                while (getDigit(robotsAndWall, Math.abs(robotLocation & 15) + count + 1)) count++;
+                while (getDigit(robotsAndWall, (robotLocation & 15) + count + 1)) count++;
                 if (count == 0) return new CompressedObjects(objects);
-                newRobotLocation = (byte) ((Math.abs(robotLocation & 15) + (count)) | (robotLocation & 15 << 4));
+                newRobotLocation = (byte) (((robotLocation & 15) + count) | (robotLocation & (15 << 4)));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
                 return new CompressedObjects(robotLocationsClone, objects.target);
@@ -80,7 +85,13 @@ public class CompressedObjects {
 
 
     private static boolean getDigit(short a, int i) {
-        if (i > 16 || i < 0) return false;
+        if (i > 15 || i < 0) return false;
         return (short) ((a) & 1 << i) != (short) 1 << i;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (!(obj instanceof CompressedObjects obj_)) return false;
+        return Arrays.equals(obj_.robotLocations, this.robotLocations) && obj_.target == this.target;
     }
 }

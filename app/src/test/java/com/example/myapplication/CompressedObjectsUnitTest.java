@@ -65,6 +65,14 @@ public class CompressedObjectsUnitTest {
         assertTrue((newObjects.robotLocations[0])==(byte) 0b10100000);
     }
     @Test
+    public void moveRobotNorth2(){
+        byte[] robotLocations = {(byte) 0b10111010};
+        byte target = 0;
+        CompressedObjects objects = new CompressedObjects(robotLocations, target);
+        CompressedObjects newObjects = CompressedObjects.moveRobot(map, objects, 'N', 1);
+        assertTrue((newObjects.robotLocations[0])==(byte) 0b11111010);
+    }
+    @Test
     public void moveRobotSouth(){
         byte[] robotLocations = {(byte) 0b10111010};
         byte target = 0;
