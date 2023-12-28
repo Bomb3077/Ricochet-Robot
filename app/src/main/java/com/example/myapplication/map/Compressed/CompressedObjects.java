@@ -1,7 +1,7 @@
 package com.example.myapplication.map.Compressed;
 
 public class CompressedObjects {
-    byte[] robotLocations;
+    public byte[] robotLocations;
     short target;
 
     public CompressedObjects(byte[] robotLocations, short target) {
@@ -9,15 +9,21 @@ public class CompressedObjects {
         this.target = target;
     }
 
-    public static CompressedObjects moveRobot(CompressedObjects objects, CompressedClassicMap map, char direction, int robotID) {
+    public static CompressedObjects moveRobot(CompressedClassicMap map, CompressedObjects objects,  char direction, int robotID) {
         byte robotLocation = objects.robotLocations[robotID - 1];
-        byte currColumn, currRow;
+        short currColumn, currRow;
         int count = 0;
         switch (direction) {
             case 'N':
-                currColumn = map.col[robotLocation & 15];
-                while (getDigit(currColumn, (robotLocation >> 4) + count)) count++;
-                return newObjects(count, objects, robotID);
+                currColumn = (short) (map.col[15-(robotLocation & 15)] << 1);
+                short robotsAndWall = helper1(currColumn, robotLocation, objects.robotLocations);
+                while (getDigit(robotsAndWall, Math.abs(robotLocation >> 4) + count + 1)) count++;
+
+                byte newRobotLocation = (byte) (((Math.abs(robotLocation >> 4) + (count))<<4) | (robotLocation & 15));
+                byte[] robotLocationsClone = objects.robotLocations.clone();
+                robotLocationsClone[robotID-1] = newRobotLocation;
+
+                return new CompressedObjects(robotLocationsClone,objects.target);
             case 'S':
                 currColumn = map.col[robotLocation & 15];
                 while (getDigit(currColumn, (robotLocation >> 4) - count)) count--;
@@ -35,10 +41,20 @@ public class CompressedObjects {
         }
     }
 
-    private static boolean getDigit(byte a, int i) {
-        if(i>=0)
-            return (byte) ((a) & 1 << i) == (byte) 1 << i;
-        return (byte) ((a) & 1 << (16+i)) == (byte) 1 << (16+i);
+    private static short helper1(short currColumn, byte currRobot, byte[] robotLocations) {
+        for (int i = 0; i < robotLocations.length; i++) {
+            if ((currRobot & 15) == (robotLocations[i] & 15))
+                currColumn |= 1 << (15 - (robotLocations[i] >> 4));
+        }
+        return currColumn;
+    }
+
+
+    private static boolean getDigit(short a, int i) {
+        if(i>16||i<-16) return false;
+        if (i >= 0)
+            return (short) ((a) & 1 << i) != (short) 1 << i;
+        return (short) ((a) & 1 << (15 + i)) != (short) 1 << (15 + i); // only uses first 15 bit of short
     }
 
     private static CompressedObjects newObjects(int count, CompressedObjects objects, int robotID) {

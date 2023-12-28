@@ -3,10 +3,11 @@ package com.example.myapplication.map.Compressed;
 import com.example.myapplication.map.GameMap;
 
 public class CompressedClassicMap {
-    byte[] row;
-    byte[] col;
+    short[] row;
+    short[] col;
 
-    public CompressedClassicMap(byte[] row, byte[] col, byte robotLocations, byte robotPermutation, byte targetID, byte targetLocation) {
+    public CompressedClassicMap(short[] row, short[] col) {
+        if(row.length!=16||col.length!=16) throw new IllegalArgumentException("classic map size should be 16");
         this.row = row;
         this.col = col;
     }
