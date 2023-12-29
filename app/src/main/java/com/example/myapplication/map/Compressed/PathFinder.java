@@ -1,6 +1,7 @@
 package com.example.myapplication.map.Compressed;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue; // Import necessary classes
@@ -12,7 +13,7 @@ public class PathFinder {
 
     public static CompressedObjects aStarSearch(CompressedClassicMap map, CompressedObjects startState) {
         // Priority Queue for the open list with a comparator for F cost
-        PriorityQueue<CompressedObjects> openList = new PriorityQueue<>(new YourComparator());
+        PriorityQueue<CompressedObjects> openList = new PriorityQueue<>((Comparator) new YourComparator());
 
         // Add the start node to the open list
         openList.add(startState);
