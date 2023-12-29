@@ -30,7 +30,7 @@ public class CompressedObjects {
                 currColumn = (short) (map.col[15 - robotLocation & 15] << 1);
                 robotsAndWall = helper1(currColumn, robotLocation, objects.robotLocations);
                 while (getDigit(robotsAndWall, ((robotLocation >> 4) & 15) + count + 1)) count++;
-                if (count == 0) return new CompressedObjects(objects);
+                if (count == 0) return objects;
                 newRobotLocation = (byte) (((((robotLocation >> 4) & 15) + count) << 4) | (robotLocation & 15));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
@@ -39,7 +39,7 @@ public class CompressedObjects {
                 currColumn = map.col[15 - robotLocation & 15];
                 robotsAndWall = helper1(currColumn, robotLocation, objects.robotLocations);
                 while (getDigit(robotsAndWall, ((robotLocation >> 4) & 15) - count - 1)) count++;
-                if (count == 0) return new CompressedObjects(objects);
+                if (count == 0) return objects;
                 newRobotLocation = (byte) (((((robotLocation >> 4) & 15) - count) << 4) | (robotLocation & 15));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
@@ -48,7 +48,7 @@ public class CompressedObjects {
                 currRow = map.row[15 - ((robotLocation >> 4) & 15)];
                 robotsAndWall = helper2(currRow, robotLocation, objects.robotLocations);
                 while (getDigit(robotsAndWall, (robotLocation & 15) - count - 1)) count++;
-                if (count == 0) return new CompressedObjects(objects);
+                if (count == 0) return objects;
                 newRobotLocation = (byte) (((robotLocation & 15) - count) | (robotLocation & (15 << 4)));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
@@ -57,7 +57,7 @@ public class CompressedObjects {
                 currRow = (short) (map.row[15 - ((robotLocation >> 4) & 15)] << 1);
                 robotsAndWall = helper2(currRow, robotLocation, objects.robotLocations);
                 while (getDigit(robotsAndWall, (robotLocation & 15) + count + 1)) count++;
-                if (count == 0) return new CompressedObjects(objects);
+                if (count == 0) return objects;
                 newRobotLocation = (byte) (((robotLocation & 15) + count) | (robotLocation & (15 << 4)));
                 robotLocationsClone[robotID - 1] = newRobotLocation;
 
@@ -78,11 +78,15 @@ public class CompressedObjects {
     private static short helper1(short currColumn, byte currRobot, byte[] robotLocations) {
         for (int i = 0; i < robotLocations.length; i++) {
             if ((currRobot & 15) == (robotLocations[i] & 15))
-                currColumn |= 1 << (15 - (robotLocations[i] >> 4));
+                currColumn |= 1 << ((robotLocations[i] >> 4) & 15);
         }
         return currColumn;
     }
-
+    public static boolean isRobotArrived(CompressedObjects objects){
+        for(int i=0;i<objects.robotLocations.length;i++)
+            if(objects.robotLocations[i] == objects.target) return true;
+        return false;
+    }
 
     private static boolean getDigit(short a, int i) {
         if (i > 15 || i < 0) return false;
